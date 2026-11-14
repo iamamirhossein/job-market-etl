@@ -1,5 +1,5 @@
 [project]
-name = "Job-Market-Analyzer"
+name = "job-market-etl"
 version = "0.1.0"
 description = "A tools to get data from Job market and ETL progress"
 readme = "README.md"
