@@ -33,8 +33,5 @@ archive.zip
 .DS_Store
 
 .codspeed
-
-.git
 *.pyc
 .ruff_cache
-tests
