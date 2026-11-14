@@ -674,30 +674,38 @@ wheels = [
 ]
 
 [[package]]
-name = "job-market"
+name = "job-market-analyzer"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "fastapi", extra = ["standard"] },
+    { name = "pydantic-settings" },
+    { name = "uvicorn" },
+]
+
+[package.dev-dependencies]
+dev = [
     { name = "httpx" },
     { name = "mypy" },
     { name = "pre-commit" },
-    { name = "pydantic-settings" },
     { name = "pytest" },
     { name = "ruff" },
-    { name = "uvicorn" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "fastapi", extras = ["standard"], specifier = ">=0.162.7" },
+    { name = "pydantic-settings", specifier = ">=2.16.3" },
+    { name = "uvicorn", specifier = ">=0.54.0" },
+]
+
+[package.metadata.requires-dev]
+dev = [
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "mypy", specifier = ">=2.4.1" },
     { name = "pre-commit", specifier = ">=4.7.0" },
-    { name = "pydantic-settings", specifier = ">=2.16.3" },
     { name = "pytest", specifier = ">=9.2.0" },
     { name = "ruff", specifier = ">=0.17.5" },
-    { name = "uvicorn", specifier = ">=0.54.0" },
 ]
 
 [[package]]
