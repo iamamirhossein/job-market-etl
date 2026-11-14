@@ -10,7 +10,7 @@ class Settings(BaseSettings):
         env_file_encoding="utf-8",
         extra="ignore",
     )
-    app_name: str = ""
+    app_name: str = "job-market-etl"
     app_version: str = "0.1.0"
     environment: Literal["local", "test", "prod"] = "local"
     log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR"] = "INFO"
