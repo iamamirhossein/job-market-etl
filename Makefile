@@ -5,34 +5,34 @@ PORT ?= 8585
 help:
 	@grep -E '^[a-z]+:.*##' $(MAKEFILE_LIST) | sed 's/:.*## /\t/'
 
-install:
+install: ## Install dependencies and git hooks
 	uv sync
 	uv run pre-commit install
 
-run:
+run: ## Run the API locally with reload
 	uv run uvicorn app.main:app --reload --port $(PORT)
 
-test:
+test: ## Run tests
 	uv run pytest
 
-lint:
+lint: ## Check lint and formatting
 	uv run ruff check .
 	uv run ruff format --check .
 
-format:
+format: ## Auto-fix lint issues and format code
 	uv run ruff check --fix .
 	uv run ruff format .
 
-typecheck:
+typecheck: ## Run mypy
 	uv run mypy
 
-check: lint typecheck test
+check: lint typecheck test ## Run every check (same as CI)
 
-up:
+up: ## Start the stack in Docker
 	docker compose up -d --build
 
-down:
+down: ## Stop the Docker stack
 	docker compose down
 
-logs:
+logs: ## Follow API container logs
 	docker compose logs -f api
