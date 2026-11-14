@@ -1,7 +1,7 @@
 [project]
-name = "job-market"
+name = "Job Market Analyzer"
 version = "0.1.0"
-description = "Add your description here"
+description = "A tools to get data from Job market and ETL progress"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
@@ -9,6 +9,7 @@ dependencies = [
     "httpx>=0.28.1",
     "mypy>=2.4.1",
     "pre-commit>=4.7.0",
+    "pydantic-settings>=2.16.3",
     "pytest>=9.2.0",
     "ruff>=0.17.5",
     "uvicorn>=0.54.0",
