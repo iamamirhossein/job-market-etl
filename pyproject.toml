@@ -5,6 +5,7 @@ description = "A tools to get data from Job market and ETL progress"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "boto3>=1.44.3",
     "fastapi[standard]>=0.162.7",
     "httpx>=0.28.1",
     "pydantic-settings>=2.16.3",
@@ -13,6 +14,8 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "boto3-stubs[s3]>=1.44.3",
+    "moto[s3]>=5.2.5",
     "mypy>=2.4.1",
     "pre-commit>=4.7.0",
     "pytest>=9.2.0",
