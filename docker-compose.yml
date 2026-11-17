@@ -6,6 +6,11 @@ services:
     env_file:
       - path: .env
         required: false
+    environment:
+      LAKE_ENDPOINT_URL: http://lake:9000
+    depends_on:
+      lake:
+        condition: service_healthy
     healthcheck:
       test:
         - CMD
@@ -17,3 +22,28 @@ services:
       retries: 3
       start_period: 10s
     restart: unless-stopped
+
+  lake:
+    image: rustfs/rustfs:1.0.6
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      RUSTFS_VOLUMES: /data
+      RUSTFS_ADDRESS: 0.0.0.0:9000
+      RUSTFS_CONSOLE_ADDRESS: 0.0.0.0:9001
+      RUSTFS_CONSOLE_ENABLE: "true"
+      RUSTFS_ACCESS_KEY: ${LAKE_ACCESS_KEY:-lakeadmin}
+      RUSTFS_SECRET_KEY: ${LAKE_SECRET_KEY:-lakeadmin-secret}
+    volumes:
+      - lake-data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    restart: unless-stopped
+
+volumes:
+  lake-data:

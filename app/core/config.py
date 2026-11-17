@@ -18,8 +18,8 @@ class Settings(BaseSettings):
     log_format: Literal["text", "json"] = "text"
 
     lake_endpoint_url: str = Field("http://localhost:9000", min_length=1)
-    lake_access_key: str = Field("minioadmin", min_length=1)
-    lake_secret_key: SecretStr = SecretStr("minioadmin")
+    lake_access_key: str = Field("lakeadmin", min_length=1)
+    lake_secret_key: SecretStr = SecretStr("lakeadmin-secret")
     lake_bucket: str = Field(
         "job-market-lake",
         pattern=r"^[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]$",
