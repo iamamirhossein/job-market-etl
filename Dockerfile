@@ -16,6 +16,7 @@ RUN useradd --create-home --uid 1000 appuser
 WORKDIR /app
 COPY --from=builder --chown=appuser:appuser /app/.venv /app/.venv
 COPY --chown=appuser:appuser app ./app
+COPY --chown=appuser:appuser pipeline ./pipeline
 USER appuser
 EXPOSE 8585
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8585"]

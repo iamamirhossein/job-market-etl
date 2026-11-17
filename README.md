@@ -76,6 +76,7 @@ app/
   core/       settings and logging
   schemas/    pydantic response models
 tests/        pytest suite
+pipeline/     data pipeline
 ```
 
 ## Roadmap
