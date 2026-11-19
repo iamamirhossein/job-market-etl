@@ -10,3 +10,8 @@ class HealthResponse(BaseModel):
     version: str
     environment: str
     timestamp: datetime
+
+
+class ReadinessResponse(BaseModel):
+    status: Literal["ready", "not_ready"]
+    checks: dict[str, bool]
