@@ -14,7 +14,7 @@ analytics through a FastAPI service.
 Adzuna / Remotive APIs
         │
         ▼
- raw JSON  (bronze, MinIO)
+  raw JSON  (bronze, S3-compatible object storage)
         │  pandas + pandera
         ▼
  clean Parquet  (silver)
@@ -61,22 +61,40 @@ Run `make help` for all commands.
 
 Settings are read from environment variables or a `.env` file.
 
-| Variable      | Default          | Description                              |
-| ------------- | ---------------- | ---------------------------------------- |
-| `APP_NAME`    | `job-market-etl` | Name shown in the API docs and logs      |
-| `APP_VERSION` | `0.1.0`          | Version shown in the API docs and health |
-| `ENVIRONMENT` | `local`          | `local`, `test` or `prod`                |
-| `LOG_LEVEL`   | `INFO`           | `DEBUG`, `INFO`, `WARNING` or `ERROR`    |
+| Variable            | Default                 | Description                                  |
+| ------------------- | ----------------------- | -------------------------------------------- |
+| `APP_NAME`          | `job-market-etl`        | Name shown in the API docs and logs          |
+| `APP_VERSION`       | `0.1.0`                 | Version shown in the API docs and health     |
+| `ENVIRONMENT`       | `local`                 | `local`, `test` or `prod`                    |
+| `LOG_LEVEL`         | `INFO`                  | `DEBUG`, `INFO`, `WARNING` or `ERROR`        |
+| `LOG_FORMAT`        | `text`                  | `text` for humans, `json` for log tooling    |
+| `LAKE_ENDPOINT_URL` | `http://localhost:9000` | S3-compatible endpoint of the data lake      |
+| `LAKE_ACCESS_KEY`   | `lakeadmin`             | Lake access key                              |
+| `LAKE_SECRET_KEY`   | `lakeadmin-secret`      | Lake secret key (local development only)     |
+| `LAKE_BUCKET`       | `job-market-lake`       | Bucket for bronze, silver and gold data      |
+
+## Health checks
+
+| Endpoint            | Purpose                                                             |
+| ------------------- | ------------------------------------------------------------------- |
+| `GET /health`       | Liveness: the process is running                                    |
+| `GET /health/ready` | Readiness: dependencies work (200), or the lake is unreachable (503) |
+
+The data lake is [RustFS](https://github.com/rustfs/rustfs), an S3-compatible
+object store, so the same code runs against AWS S3 in production. Its console
+is at http://localhost:9001/rustfs/console/ when running with Docker.
 
 ## Project layout
 
 ```
 app/
-  api/        FastAPI routers
+  api/        FastAPI routers and dependencies
   core/       settings and logging
   schemas/    pydantic response models
+pipeline/
+  lake/       S3 client and bronze key conventions
+  models.py   JobPost data contract
 tests/        pytest suite
-pipeline/     data pipeline
 ```
 
 ## Roadmap
@@ -84,6 +102,7 @@ pipeline/     data pipeline
 - [x] Project foundation: settings, logging, health endpoint, tests
 - [x] Tooling: ruff, strict mypy, pre-commit, Makefile
 - [x] Docker image and Compose file, GitHub Actions CI
+- [x] Object-storage lake, data contract, readiness checks, JSON logging
 - [ ] Data extraction from job APIs
 - [ ] Cleaning, skill extraction and validation
 - [ ] Warehouse loading and dbt models
