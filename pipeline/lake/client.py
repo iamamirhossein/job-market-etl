@@ -48,6 +48,8 @@ class LakeClient:
             config=Config(
                 s3={"addressing_style": "path"},
                 retries={"max_attempts": 3},
+                connect_timeout=3,
+                read_timeout=10,
             ),
         )
 
