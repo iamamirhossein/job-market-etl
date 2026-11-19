@@ -1,19 +1,46 @@
+import json
+import logging
 import logging.config
+from datetime import UTC, datetime
+from typing import Any, Literal
 
-LOG_FORMAT = "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s"
+TEXT_FORMAT = "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s"
+
+_STANDARD_ATTRS = set(logging.makeLogRecord({}).__dict__) | {"message", "asctime"}
 
 
-def setup_logging(level: str = "INFO") -> None:
+class JsonFormatter(logging.Formatter):
+    """Render each log record as one line of JSON."""
+
+    def format(self, record: logging.LogRecord) -> str:
+        payload: dict[str, Any] = {
+            "timestamp": datetime.fromtimestamp(record.created, UTC).isoformat(),
+            "level": record.levelname,
+            "logger": record.name,
+            "message": record.getMessage(),
+        }
+        if record.exc_info:
+            payload["exception"] = self.formatException(record.exc_info)
+        for key, value in record.__dict__.items():
+            if key not in _STANDARD_ATTRS:
+                payload[key] = value
+        return json.dumps(payload, default=str)
+
+
+def setup_logging(
+    level: str = "INFO",
+    log_format: Literal["text", "json"] = "text",
+) -> None:
+    formatter: dict[str, Any] = (
+        {"()": JsonFormatter}
+        if log_format == "json"
+        else {"format": TEXT_FORMAT, "datefmt": "%Y-%m-%d %H:%M:%S"}
+    )
     logging.config.dictConfig(
         {
             "version": 1,
             "disable_existing_loggers": False,
-            "formatters": {
-                "default": {
-                    "format": LOG_FORMAT,
-                    "datefmt": "%Y-%m-%d %H:%M:%S",
-                },
-            },
+            "formatters": {"default": formatter},
             "handlers": {
                 "console": {
                     "class": "logging.StreamHandler",
