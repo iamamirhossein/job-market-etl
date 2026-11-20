@@ -22,7 +22,5 @@ def generate_bronze_prefix(source: str, run_date: date | None = None) -> str:
 
 
 def generate_bronze_key(source: str, run_date: date, run_id: str) -> str:
-    val = (
-        f"{generate_bronze_prefix(source, run_date)}{_validate('run_id', run_id)}.json"
-    )
+    val = f"{generate_bronze_prefix(source, run_date)}{_validate('run_id', run_id)}.json"
     return val
