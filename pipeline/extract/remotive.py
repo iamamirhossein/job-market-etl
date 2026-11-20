@@ -97,7 +97,7 @@ class RemotiveExtractor(BaseExtractor):
             source_url=row["url"],
             title=row["title"],
             company=row.get("company_name"),
-            description=row.get("description"),
+            description=row.get("description") or "",
             location=row.get("candidate_required_location"),
             salary_text=row.get("salary") or None,
             tags=row.get("tags") or (),
