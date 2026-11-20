@@ -55,6 +55,20 @@ make run        # API with auto-reload on port 8585
 make check      # lint, type check, tests (same as CI)
 ```
 
+### Running an extraction
+
+With the lake running (`docker compose up -d lake`):
+
+```bash
+make extract SOURCE=remotive      # same, source chosen explicitly
+uv run python -m pipeline.run_extractor remotive --run-id test-001
+```
+
+Each run stores the untouched API response at
+`bronze/source=<source>/dt=<date>/<run_id>.json` and logs how many postings
+passed the data contract and how many were rejected. Using the same `--run-id`
+again overwrites the same object, so re-running is safe.
+
 Run `make help` for all commands.
 
 ## Configuration
@@ -84,6 +98,16 @@ The data lake is [RustFS](https://github.com/rustfs/rustfs), an S3-compatible
 object store, so the same code runs against AWS S3 in production. Its console
 is at http://localhost:9001/rustfs/console/ when running with Docker.
 
+## Data sources
+
+| Source | Access | Notes |
+| ------ | ------ | ----- |
+| [Remotive](https://remotive.com) | Public API, no key | Small curated feed (about 15 remote jobs), delayed by 24 hours |
+
+Job data is provided by [Remotive](https://remotive.com), and every posting
+keeps a link back to its original page on remotive.com. Postings are only used
+for analytics in this project and are not republished.
+
 ## Project layout
 
 ```
@@ -92,8 +116,10 @@ app/
   core/       settings and logging
   schemas/    pydantic response models
 pipeline/
+  extract/    source extractors (Remotive) and their base class
   lake/       S3 client and bronze key conventions
   models.py   JobPost data contract
+  run_extractor.py   fetch, store raw data in bronze, parse
 tests/        pytest suite
 ```
 
@@ -103,7 +129,8 @@ tests/        pytest suite
 - [x] Tooling: ruff, strict mypy, pre-commit, Makefile
 - [x] Docker image and Compose file, GitHub Actions CI
 - [x] Object-storage lake, data contract, readiness checks, JSON logging
-- [ ] Data extraction from job APIs
+- [x] Remotive extractor: raw data to bronze, validated `JobPost` objects
+- [ ] Adzuna extractor
 - [ ] Cleaning, skill extraction and validation
 - [ ] Warehouse loading and dbt models
 - [ ] Analytics API and dashboard
