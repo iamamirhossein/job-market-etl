@@ -2,6 +2,9 @@
 
 PORT ?= 8585
 
+extract: ## Extract jobs into the lake (SOURCE=remotive)
+	uv run python -m pipeline.run_extractor $(SOURCE)
+
 help:
 	@grep -E '^[a-z]+:.*##' $(MAKEFILE_LIST) | sed 's/:.*## /\t/'
 

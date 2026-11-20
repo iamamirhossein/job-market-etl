@@ -22,12 +22,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         settings.app_version,
         settings.environment,
     )
-    lake = LakeClient(
-        endpoint_url=settings.lake_endpoint_url,
-        access_key=settings.lake_access_key,
-        secret_key=settings.lake_secret_key.get_secret_value(),
-        bucket=settings.lake_bucket,
-    )
+    lake = LakeClient.setup_settings(settings)
     try:
         await asyncio.to_thread(lake.ensure_bucket)
     except LakeError:

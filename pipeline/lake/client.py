@@ -11,6 +11,8 @@ from botocore.exceptions import BotoCoreError, ClientError
 if TYPE_CHECKING:
     from mypy_boto3_s3 import S3Client
 
+    from app.core.config import Settings
+
 logger = logging.getLogger(__name__)
 
 _NOT_FOUND_CODES = {"404", "NoSuchKey", "NoSuchBucket", "NotFound"}
@@ -51,6 +53,15 @@ class LakeClient:
                 connect_timeout=3,
                 read_timeout=10,
             ),
+        )
+
+    @classmethod
+    def setup_settings(cls, settings: Settings) -> LakeClient:
+        return cls(
+            endpoint_url=settings.lake_endpoint_url,
+            access_key=settings.lake_access_key,
+            secret_key=settings.lake_secret_key.get_secret_value(),
+            bucket=settings.lake_bucket,
         )
 
     @property
