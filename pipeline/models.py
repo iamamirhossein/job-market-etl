@@ -26,8 +26,11 @@ class JobPost(BaseModel):
     country: str | None = Field(default=None, pattern=r"^[A-Z]{2}$")
     salary_min: float | None = Field(default=None, ge=0)
     salary_max: float | None = Field(default=None, ge=0)
+    salary_text: str | None = Field(default=None)
     currency: str | None = Field(default=None, pattern=r"^[A-Z]{3}$")
     description: str = ""
+    tags: tuple[str, ...] = ()
+    category: str | None = None
     posted_at: AwareDatetime
     fetched_at: AwareDatetime
 

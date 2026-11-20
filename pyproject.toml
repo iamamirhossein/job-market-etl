@@ -9,6 +9,7 @@ dependencies = [
     "fastapi[standard]>=0.162.7",
     "httpx>=0.28.1",
     "pydantic-settings>=2.16.3",
+    "tenacity>=9.2.1",
     "uvicorn>=0.54.0",
 ]
 
@@ -28,7 +29,7 @@ pythonpath = ["."]
 addopts = "-ra"
 
 [tool.ruff]
-line-length = 88
+line-length = 90
 target-version = "py313"
 
 [tool.ruff.lint]
