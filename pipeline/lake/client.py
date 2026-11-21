@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import logging
+from datetime import datetime
 from typing import TYPE_CHECKING, Any
 
 import boto3
@@ -136,3 +137,35 @@ class LakeClient:
         except (ClientError, BotoCoreError) as exc:
             raise LakeError(f"failed to list {prefix!r}") from exc
         return keys
+
+    def get_bytes(self, key: str) -> bytes:
+        try:
+            response = self._s3.get_object(Bucket=self._bucket, Key=key)
+            return response["Body"].read()
+        except ClientError as exc:
+            if _error_code(exc) in _NOT_FOUND_CODES:
+                raise ObjectNotFoundError(f"object {key!r} not found") from exc
+            raise LakeError(f"failed to read {key!r}") from exc
+        except BotoCoreError as exc:
+            raise LakeError(f"failed to read {key!r}") from exc
+
+    def put_bytes(self, key: str, data: bytes, content_type: str) -> None:
+        try:
+            self._s3.put_object(
+                Bucket=self._bucket, Key=key, Body=data, ContentType=content_type
+            )
+        except ClientError as exc:
+            raise LakeError(f"failed to write {key!r}") from exc
+        except BotoCoreError as exc:
+            raise LakeError(f"failed to write {key!r}") from exc
+        logger.debug(f"{key} has been written with {len(data)} bytes")
+
+    def last_modified(self, key: str) -> datetime:
+        try:
+            return self._s3.head_object(Bucket=self._bucket, Key=key)["LastModified"]
+        except ClientError as exc:
+            if _error_code(exc) in _NOT_FOUND_CODES:
+                raise ObjectNotFoundError(f"object {key!r} not found") from exc
+            raise LakeError(f"failed to check {key!r}") from exc
+        except BotoCoreError as exc:
+            raise LakeError(f"failed to check {key!r}") from exc

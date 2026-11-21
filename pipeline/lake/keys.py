@@ -2,6 +2,7 @@ import re
 from datetime import date
 
 BRONZE_PREFIX = "bronze"
+SILVER_PREFIX = "silver"
 
 _VALID_NAME_PATTERN = re.compile(r"[a-z0-9][a-z0-9_-]*")
 
@@ -24,3 +25,10 @@ def generate_bronze_prefix(source: str, run_date: date | None = None) -> str:
 def generate_bronze_key(source: str, run_date: date, run_id: str) -> str:
     val = f"{generate_bronze_prefix(source, run_date)}{_validate('run_id', run_id)}.json"
     return val
+
+
+def generate_silver_key(source: str, run_date: date) -> str:
+    return (
+        f"{SILVER_PREFIX}/source={_validate('source', source)}/"
+        f"dt={run_date:%Y-%m-%d}/jobs.parquet"
+    )

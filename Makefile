@@ -1,9 +1,13 @@
 .PHONY: help install run test lint format typecheck check up down logs
 
 PORT ?= 8585
+SOURCE ?= remotive
 
 extract: ## Extract jobs into the lake (SOURCE=remotive)
 	uv run python -m pipeline.run_extractor $(SOURCE)
+
+silver: ## Build silver Parquet from today's bronze (SOURCE=remotive)
+	uv run python -m pipeline.run_silver_generator $(SOURCE)
 
 help:
 	@grep -E '^[a-z]+:.*##' $(MAKEFILE_LIST) | sed 's/:.*## /\t/'
